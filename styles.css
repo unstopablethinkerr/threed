@@ -172,3 +172,24 @@ body, html {
   transform: scale(1.05);
   box-shadow: 0 6px 15px rgba(248, 57, 9, 0.6);
 }
+
+
+
+#fix-btn {
+  margin-top: 20px;
+  padding: 10px 10px;
+  font-size: 16px;
+  background-color: #28a745; /* Green background for fix button */
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+#fix-btn:hover {
+  background-color: #218838; /* Darker green on hover */
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(33, 136, 56, 0.6);
+}
+
