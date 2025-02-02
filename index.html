@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AR Positioning UI</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Brush Icon -->
+        <img src="./assets/brush.png" alt="Brush Icon" class="brush-icon">
+
+        <!-- Camera View -->
+        <div class="camera-view">
+            <video id="video" autoplay playsinline></video>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+           
+            <div class="control-options" id="control-options">
+                <img src="./assets/controls/scale.svg" alt="Scaling" class="option-btn" data-option="scaling">
+                <img src="./assets/controls/position.svg" alt="Position" class="option-btn" data-option="position">
+                <img src="./assets/controls/tilt.svg" alt="Tilt" class="option-btn" data-option="tilt">
+            </div>
+            <div class="sliders" id="sliders">
+                <div id="scaling-sliders">
+                    <label for="scale">Scale:</label>
+                    <input type="range" id="scale" min="0.5" max="2" step="0.1" value="1">
+                </div>
+                <div id="position-sliders">
+                    <label for="x-position">X Position:</label>
+                    <input type="range" id="x-position" min="0" max="100" value="50">
+                    <label for="y-position">Y Position:</label>
+                    <input type="range" id="y-position" min="0" max="100" value="50">
+                </div>
+                <div id="tilt-sliders">
+                    <label for="tilt-x">Tilt X:</label>
+                    <input type="range" id="tilt-x" min="-180" max="180" value="0">
+                    <label for="tilt-y">Tilt Y:</label>
+                    <input type="range" id="tilt-y" min="-180" max="180" value="0">
+                    <label for="tilt-z">Tilt Z:</label>
+                    <input type="range" id="tilt-z" min="-180" max="180" value="0">
+                </div>
+            </div>
+            <div class="main-controls">
+                <button id="control-btn">Control</button>
+                <button id="reset-btn">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hiro Card -->
+    <img src="./assets/hiro_card.png" alt="Hiro Card" class="hiro-card" id="hiro-card">
+
+    <script src="./script.js"></script>
+</body>
+</html>
