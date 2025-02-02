@@ -14,6 +14,40 @@ let isFixed = false;
 let fixedPosition = { x: 0, y: 0, z: 0 };
 let fixedScale = 1;
 
+//Three.js setup
+let scene, camera, renderer, model;
+
+function initThreeJS() {
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const light = new THREE.AmbientLight(0x404040); // Soft white light
+    scene.add(light);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    scene.add(directionalLight);
+
+    const loader = new THREE.GLTFLoader();
+    loader.load('./assets/models/IRONMAN.gltf', (gltf) => {
+        model = gltf.scene;
+        scene.add(model);
+        model.position.set(0, 0, 0);
+        model.scale.set(1, 1, 1);
+        animate();
+    }, undefined, (error) => {
+        console.error(error);
+    });
+
+    camera.position.z = 5;
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+}
 
 // Event Listeners
 controlBtn.addEventListener('click', () => {
@@ -77,15 +111,9 @@ function updateTransform() {
     const tiltY = document.getElementById('tilt-y').value;
     const tiltZ = document.getElementById('tilt-z').value;
 
-    hiroCard.style.transform = `
-        translate(-50%, -50%)
-        scale(${scale})
-        rotateX(${tiltX}deg)
-        rotateY(${tiltY}deg)
-        rotateZ(${tiltZ}deg)
-    `;
-    hiroCard.style.left = `${xPosition}%`;
-    hiroCard.style.top = `${yPosition}%`;
+    model.scale.set(scale, scale, scale);
+    model.position.set(xPosition / 100 * 10 - 5, yPosition / 100 * 10 - 5, 0);
+    model.rotation.set(THREE.MathUtils.degToRad(tiltX), THREE.MathUtils.degToRad(tiltY), THREE.MathUtils.degToRad(tiltZ));
 }
 
 document.getElementById('scale').addEventListener('input', updateTransform);
@@ -149,14 +177,11 @@ function handleOrientationEvent(event) {
         const newYPosition = fixedPosition.y + (beta / 90) * 10;
         const newScale = fixedScale + (alpha / 360) * 0.5;
 
-        hiroCard.style.left = `${newXPosition}%`;
-        hiroCard.style.top = `${newYPosition}%`;
-        hiroCard.style.transform = `
-            translate(-50%, -50%)
-            scale(${newScale})
-            rotateX(${beta}deg)
-            rotateY(${gamma}deg)
-            rotateZ(${alpha}deg)
-        `;
+       model.position.set(newXPosition / 100 * 10 - 5, newYPosition / 100 * 10 - 5, 0);
+        model.scale.set(newScale, newScale, newScale);
+        model.rotation.set(THREE.MathUtils.degToRad(beta), THREE.MathUtils.degToRad(gamma), THREE.MathUtils.degToRad(alpha));
     }
 }
+
+// Initialize Three.js
+initThreeJS();
