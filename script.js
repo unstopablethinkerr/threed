@@ -7,6 +7,13 @@ const positionSliders = document.getElementById('position-sliders');
 const tiltSliders = document.getElementById('tilt-sliders');
 const resetBtn = document.getElementById('reset-btn');
 const hiroCard = document.getElementById('hiro-card');
+const video = document.getElementById('video');
+const fixBtn = document.getElementById('fix-btn'); // New Button
+
+let isFixed = false;
+let fixedPosition = { x: 0, y: 0, z: 0 };
+let fixedScale = 1;
+
 
 // Event Listeners
 controlBtn.addEventListener('click', () => {
@@ -23,6 +30,17 @@ controlOptions.addEventListener('click', (e) => {
 });
 
 resetBtn.addEventListener('click', resetControls);
+
+fixBtn.addEventListener('click', () => {
+    isFixed = true;
+    fixedPosition = {
+        x: parseFloat(document.getElementById('x-position').value),
+        y: parseFloat(document.getElementById('y-position').value),
+        z: 0
+    };
+    fixedScale = parseFloat(document.getElementById('scale').value);
+    startDeviceMotionTracking();
+});
 
 // Show Sliders Based on Option
 function showSliders(option) {
@@ -94,3 +112,33 @@ async function startCamera() {
 
 // Start the camera when the page loads
 startCamera();
+
+// Track Device Movement
+function startDeviceMotionTracking() {
+    if (window.DeviceMotionEvent) {
+        window.addEventListener('devicemotion', handleMotionEvent, true);
+    } else {
+        alert('DeviceMotion API is not supported in your browser.');
+    }
+}
+
+function handleMotionEvent(event) {
+    if (isFixed) {
+        const acceleration = event.accelerationIncludingGravity;
+        const x = acceleration.x;
+        const y = acceleration.y;
+        const z = acceleration.z;
+
+        // Adjust the position and scale based on device movement
+        const newXPosition = fixedPosition.x + x * 0.1;
+        const newYPosition = fixedPosition.y + y * 0.1;
+        const newScale = fixedScale + z * 0.01;
+
+        hiroCard.style.left = `${newXPosition}%`;
+        hiroCard.style.top = `${newYPosition}%`;
+        hiroCard.style.transform = `
+            translate(-50%, -50%)
+            scale(${newScale})
+        `;
+    }
+}
