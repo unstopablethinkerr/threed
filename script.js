@@ -123,35 +123,40 @@ async function startCamera() {
 startCamera();
 
 // Track Device Movement
+// Track Device Movement
 function startDeviceMotionTracking() {
-    if (window.DeviceMotionEvent) {
-        window.addEventListener('devicemotion', handleMotionEvent, true);
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', handleOrientationEvent, true);
     } else {
-        alert('DeviceMotion API is not supported in your browser.');
+        alert('DeviceOrientation API is not supported in your browser.');
     }
 }
 
+
 function stopDeviceMotionTracking() {
-    window.removeEventListener('devicemotion', handleMotionEvent, true);
+    window.removeEventListener('deviceorientation', handleOrientationEvent, true);
 }
 
-function handleMotionEvent(event) {
-    if (isFixed) {
-        const acceleration = event.accelerationIncludingGravity;
-        const x = acceleration.x;
-        const y = acceleration.y;
-        const z = acceleration.z;
 
-        // Adjust the position and scale based on device movement
-        const newXPosition = fixedPosition.x + x * 0.1;
-        const newYPosition = fixedPosition.y + y * 0.1;
-        const newScale = fixedScale + z * 0.01;
+function handleOrientationEvent(event) {
+    if (isFixed) {
+        const alpha = event.alpha; // Z-axis rotation (0-360 degrees)
+        const beta = event.beta;  // X-axis rotation (-180-180 degrees)
+        const gamma = event.gamma; // Y-axis rotation (-90-90 degrees)
+
+        // Adjust the position and scale based on device orientation
+        const newXPosition = fixedPosition.x + (gamma / 90) * 10;
+        const newYPosition = fixedPosition.y + (beta / 90) * 10;
+        const newScale = fixedScale + (alpha / 360) * 0.5;
 
         hiroCard.style.left = `${newXPosition}%`;
         hiroCard.style.top = `${newYPosition}%`;
         hiroCard.style.transform = `
             translate(-50%, -50%)
             scale(${newScale})
+            rotateX(${beta}deg)
+            rotateY(${gamma}deg)
+            rotateZ(${alpha}deg)
         `;
     }
 }
