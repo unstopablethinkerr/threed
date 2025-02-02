@@ -30,16 +30,25 @@ controlOptions.addEventListener('click', (e) => {
 });
 
 resetBtn.addEventListener('click', resetControls);
-
 fixBtn.addEventListener('click', () => {
-    isFixed = true;
-    fixedPosition = {
-        x: parseFloat(document.getElementById('x-position').value),
-        y: parseFloat(document.getElementById('y-position').value),
-        z: 0
-    };
-    fixedScale = parseFloat(document.getElementById('scale').value);
-    startDeviceMotionTracking();
+    isFixed = !isFixed;
+    if (isFixed) {
+        fixedPosition = {
+            x: parseFloat(document.getElementById('x-position').value),
+            y: parseFloat(document.getElementById('y-position').value),
+            z: 0
+        };
+        fixedScale = parseFloat(document.getElementById('scale').value);
+        fixBtn.textContent = 'Unpin';
+        controlBtn.disabled = true;
+        resetBtn.disabled = true;
+        startDeviceMotionTracking();
+    } else {
+        fixBtn.textContent = 'Fix Position';
+        controlBtn.disabled = false;
+        resetBtn.disabled = false;
+        stopDeviceMotionTracking();
+    }
 });
 
 // Show Sliders Based on Option
@@ -120,6 +129,10 @@ function startDeviceMotionTracking() {
     } else {
         alert('DeviceMotion API is not supported in your browser.');
     }
+}
+
+function stopDeviceMotionTracking() {
+    window.removeEventListener('devicemotion', handleMotionEvent, true);
 }
 
 function handleMotionEvent(event) {
