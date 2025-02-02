@@ -79,3 +79,18 @@ function resetControls() {
 
     updateTransform();
 }
+
+// Request access to the back camera
+async function startCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { exact: "environment" } }
+        });
+        video.srcObject = stream;
+    } catch (error) {
+        console.error('Error accessing the camera:', error);
+    }
+}
+
+// Start the camera when the page loads
+startCamera();
