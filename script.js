@@ -1,4 +1,4 @@
- // DOM Elements
+// DOM Elements
 const controlBtn = document.getElementById('control-btn');
 const controlOptions = document.getElementById('control-options');
 const sliders = document.getElementById('sliders');
@@ -6,53 +6,17 @@ const scalingSliders = document.getElementById('scaling-sliders');
 const positionSliders = document.getElementById('position-sliders');
 const tiltSliders = document.getElementById('tilt-sliders');
 const resetBtn = document.getElementById('reset-btn');
-const hiroCard = document.getElementById('hiro-card');
 const video = document.getElementById('video');
-const fixBtn = document.getElementById('fix-btn'); // New Button
+const fixBtn = document.getElementById('fix-btn');
 
 let isFixed = false;
 let fixedPosition = { x: 0, y: 0, z: 0 };
 let fixedScale = 1;
 
-//Three.js setup
-let scene, camera, renderer, model;
-
-function initThreeJS() {
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    renderer = new THREE.WebGLRenderer({ alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    const light = new THREE.AmbientLight(0x404040); // Soft white light
-    scene.add(light);
-
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    scene.add(directionalLight);
-
-    const loader = new THREE.GLTFLoader();
-    loader.load('./assets/models/IRONMAN.gltf', (gltf) => {
-        model = gltf.scene;
-        scene.add(model);
-        model.position.set(0, 0, 0);
-        model.scale.set(1, 1, 1);
-        animate();
-    }, undefined, (error) => {
-        console.error(error);
-    });
-
-    camera.position.z = 5;
-}
-
-function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-}
-
 // Event Listeners
 controlBtn.addEventListener('click', () => {
     controlOptions.classList.toggle('hidden');
-    sliders.classList.add('hidden'); // Hide sliders when options are shown
+    sliders.classList.add('hidden');
 });
 
 controlOptions.addEventListener('click', (e) => {
@@ -102,7 +66,7 @@ function showSliders(option) {
     sliders.classList.remove('hidden');
 }
 
-// Update Hiro Card Transformations
+// Update Model Transformations
 function updateTransform() {
     const scale = document.getElementById('scale').value;
     const xPosition = document.getElementById('x-position').value;
@@ -111,9 +75,10 @@ function updateTransform() {
     const tiltY = document.getElementById('tilt-y').value;
     const tiltZ = document.getElementById('tilt-z').value;
 
-    model.scale.set(scale, scale, scale);
-    model.position.set(xPosition / 100 * 10 - 5, yPosition / 100 * 10 - 5, 0);
-    model.rotation.set(THREE.MathUtils.degToRad(tiltX), THREE.MathUtils.degToRad(tiltY), THREE.MathUtils.degToRad(tiltZ));
+    const model = document.querySelector('a-entity[gltf-model]');
+    model.setAttribute('scale', `${scale} ${scale} ${scale}`);
+    model.setAttribute('position', `${xPosition / 100 * 10 - 5} ${yPosition / 100 * 10 - 5} 0`);
+    model.setAttribute('rotation', `${tiltX} ${tiltY} ${tiltZ}`);
 }
 
 document.getElementById('scale').addEventListener('input', updateTransform);
@@ -151,7 +116,6 @@ async function startCamera() {
 startCamera();
 
 // Track Device Movement
-// Track Device Movement
 function startDeviceMotionTracking() {
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', handleOrientationEvent, true);
@@ -160,11 +124,9 @@ function startDeviceMotionTracking() {
     }
 }
 
-
 function stopDeviceMotionTracking() {
     window.removeEventListener('deviceorientation', handleOrientationEvent, true);
 }
-
 
 function handleOrientationEvent(event) {
     if (isFixed) {
@@ -177,11 +139,9 @@ function handleOrientationEvent(event) {
         const newYPosition = fixedPosition.y + (beta / 90) * 10;
         const newScale = fixedScale + (alpha / 360) * 0.5;
 
-       model.position.set(newXPosition / 100 * 10 - 5, newYPosition / 100 * 10 - 5, 0);
-        model.scale.set(newScale, newScale, newScale);
-        model.rotation.set(THREE.MathUtils.degToRad(beta), THREE.MathUtils.degToRad(gamma), THREE.MathUtils.degToRad(alpha));
+        const model = document.querySelector('a-entity[gltf-model]');
+        model.setAttribute('position', `${newXPosition / 100 * 10 - 5} ${newYPosition / 100 * 10 - 5} 0`);
+        model.setAttribute('scale', `${newScale} ${newScale} ${newScale}`);
+        model.setAttribute('rotation', `${beta} ${gamma} ${alpha}`);
     }
 }
-
-// Initialize Three.js
-initThreeJS();
